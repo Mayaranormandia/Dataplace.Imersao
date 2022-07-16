@@ -60,8 +60,33 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
             Situacao = OrcamentoStatusEnum.Aberto;
             DtFechamento = null;
         }
+        public void CancelamentoOrcamento()
+        {
 
-        public void DefinirValidade(int diasValidade)
+            switch (Situacao)
+            {
+                case OrcamentoStatusEnum.Aberto:
+                    throw new DomainException("Orçamento não pode ser cancelado pois está aberto!");
+                    break; 
+
+                case OrcamentoStatusEnum.Fechado:
+                    Situacao = OrcamentoStatusEnum.Cancelado;
+                    break;
+                }
+
+
+        }
+        public void InsercaoItemOrcamento()
+        {
+            if (Situacao == OrcamentoStatusEnum.Fechado)
+                throw new DomainException("Orçamento está fechado, reabra para inserir itens!");
+
+            if (Situacao == OrcamentoStatusEnum.Aberto) ;
+              //Itens.Add;
+             
+             }
+
+            public void DefinirValidade(int diasValidade)
         {
             this.Validade = new OrcamentoValidade(this, diasValidade);
         }
