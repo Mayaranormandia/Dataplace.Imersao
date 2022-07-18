@@ -43,6 +43,8 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         public ICollection<OrcamentoItem> Itens { get; private set; }
 
 
+
+
         public void FecharOrcamento()
         {
             if (Situacao == OrcamentoStatusEnum.Fechado)
@@ -78,13 +80,15 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         }
         public void InsercaoItemOrcamento()
         {
-            if (Situacao == OrcamentoStatusEnum.Fechado)
+            if (Situacao != OrcamentoStatusEnum.Aberto)
                 throw new DomainException("Orçamento está fechado, reabra para inserir itens!");
 
-            if (Situacao == OrcamentoStatusEnum.Aberto) ;
-              //Itens.Add;
-             
-             }
+            var produto = new OrcamentoProduto(TpRegistroEnum.ProdutoFinal, "256");
+            var preco = new OrcamentoItemPrecoTotal(50, 40);
+            var item = new OrcamentoItem("05", "02", 250, produto, 10, preco);
+
+            Itens.Add(item);
+        }
 
             public void DefinirValidade(int diasValidade)
         {
@@ -123,6 +127,15 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
             public static Orcamento OrcamentoRapido(string cdEmpresa, string cdFilial, int numOrcamento, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
             {
                 return new Orcamento(cdEmpresa, cdFilial, numOrcamento, null, usuario, vendedor, tabelaPreco);
+            }
+            public static Orcamento ItemOrcamento(string cdEmpresa, string cdFilial, int numOrcamento, OrcamentoCliente cliente, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+            {
+                return new Orcamento(cdEmpresa, cdFilial, numOrcamento, cliente, usuario, vendedor, tabelaPreco);
+            }
+
+            public static OrcamentoItem OrcamentoItem(string produto, int quantidade, decimal preco)
+            {
+                throw new NotImplementedException();
             }
         }
 
