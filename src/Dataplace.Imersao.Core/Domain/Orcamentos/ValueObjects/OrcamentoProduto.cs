@@ -15,6 +15,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos.ValueObjects
             CdProduto = cdRegistro;
         }
 
+        public static string ProdutoFinal { get; internal set; }
         public TpRegistroEnum TpProduto { get; }
         public string CdProduto { get; }
     }

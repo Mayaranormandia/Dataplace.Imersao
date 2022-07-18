@@ -8,7 +8,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
 {
     public class Orcamento
     {
-        private Orcamento(string cdEmpresa, string cdFilial, int numOrcamento, OrcamentoCliente cliente, 
+        private Orcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente, 
             string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
         {
 
@@ -30,7 +30,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
 
         public string CdEmpresa { get; private set; }
         public string CdFilial { get; private set; }
-        public int NumOrcamento { get; private set; }
+        public string NumOrcamento { get; private set; }
         public OrcamentoCliente Cliente { get; private set; }
         public DateTime DtOrcamento { get; private set; }
         public decimal ValotTotal { get; private set; }
@@ -41,9 +41,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         public string Usuario { get; private set; }
         public OrcamentoStatusEnum Situacao { get; private set; }
         public ICollection<OrcamentoItem> Itens { get; private set; }
-
-
-
+        public string Quantidade { get; private set; }
 
         public void FecharOrcamento()
         {
@@ -69,8 +67,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
             {
                 case OrcamentoStatusEnum.Aberto:
                     throw new DomainException("Orçamento não pode ser cancelado pois está aberto!");
-                    break; 
-
+                   
                 case OrcamentoStatusEnum.Fechado:
                     Situacao = OrcamentoStatusEnum.Cancelado;
                     break;
@@ -101,6 +98,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         public bool IsValid()
         {
             Validations = new List<string>();
+    
 
             if (string.IsNullOrEmpty(CdEmpresa))
                 Validations.Add("Código da empresa é requirido!");
@@ -108,10 +106,25 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
             if (string.IsNullOrEmpty(CdFilial))
                 Validations.Add("Código da filial é requirido!");
 
+
+            if (string.IsNullOrEmpty(Quantidade))
+                Validations.Add("A quantidade do item é requirida!");
+
+
+            if (string.IsNullOrEmpty(NumOrcamento))
+                Validations.Add("Número de orçamento é requirido!");
+
+            if (string.IsNullOrEmpty(OrcamentoProduto.ProdutoFinal))
+                Validations.Add("Código do produto é requirido!");
+
+
+
             if (Validations.Count > 0)
                 return false;
             else
                 return true;
+
+
         }
 
         #endregion
@@ -120,15 +133,15 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         public static class Factory
         {
 
-            public static Orcamento Orcamento(string cdEmpresa, string cdFilial, int numOrcamento, OrcamentoCliente cliente , string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+            public static Orcamento Orcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente , string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
             {
                 return new Orcamento(cdEmpresa, cdFilial, numOrcamento, cliente, usuario, vendedor, tabelaPreco);
             }
-            public static Orcamento OrcamentoRapido(string cdEmpresa, string cdFilial, int numOrcamento, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+            public static Orcamento OrcamentoRapido(string cdEmpresa, string cdFilial,string numOrcamento, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
             {
                 return new Orcamento(cdEmpresa, cdFilial, numOrcamento, null, usuario, vendedor, tabelaPreco);
             }
-            public static Orcamento ItemOrcamento(string cdEmpresa, string cdFilial, int numOrcamento, OrcamentoCliente cliente, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+            public static Orcamento ItemOrcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
             {
                 return new Orcamento(cdEmpresa, cdFilial, numOrcamento, cliente, usuario, vendedor, tabelaPreco);
             }
