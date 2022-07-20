@@ -8,14 +8,14 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
 {
     public class Orcamento
     {
-        private Orcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente, 
-            string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+        private Orcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente,
+           OrcamentoUsuario usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
         {
 
             CdEmpresa = cdEmpresa;
             CdFilial = cdFilial;
             Cliente = cliente;
-            NumOrcamento = numOrcamento;
+            this.numOrcamento = numOrcamento;
             Usuario = usuario;
             Vendedor = vendedor;
             TabelaPreco = tabelaPreco;
@@ -28,9 +28,8 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
 
         }
 
-        public string CdEmpresa { get; private set; }
-        public string CdFilial { get; private set; }
-        public string NumOrcamento { get; private set; }
+        public  OrcamentoUsuario Usuario { get; private set; }
+        public string numOrcamento { get; private set; }
         public OrcamentoCliente Cliente { get; private set; }
         public DateTime DtOrcamento { get; private set; }
         public decimal ValotTotal { get; private set; }
@@ -38,10 +37,11 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         public OrcamentoTabelaPreco TabelaPreco { get; private set; }
         public DateTime? DtFechamento { get; private set; }
         public OrcamentoVendedor Vendedor { get; private set; }
-        public string Usuario { get; private set; }
         public OrcamentoStatusEnum Situacao { get; private set; }
         public ICollection<OrcamentoItem> Itens { get; private set; }
         public string Quantidade { get; private set; }
+        public string CdEmpresa { get; }
+        public string CdFilial { get; }
 
         public void FecharOrcamento()
         {
@@ -54,7 +54,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
 
         public void ReabrirOrcamento()
         {
-            if (Situacao == OrcamentoStatusEnum.Aberto)
+            if (Situacao == OrcamentoStatusEnum.Fechado)
                 throw new DomainException("Orçamento já está fechado!");
 
             Situacao = OrcamentoStatusEnum.Aberto;
@@ -63,20 +63,15 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         public void CancelamentoOrcamento()
         {
 
-            switch (Situacao)
-            {
-                case OrcamentoStatusEnum.Aberto:
-                    throw new DomainException("Orçamento não pode ser cancelado pois está aberto!");
-                   
-                case OrcamentoStatusEnum.Fechado:
-                    Situacao = OrcamentoStatusEnum.Cancelado;
-                    break;
-                }
+            if (Situacao != OrcamentoStatusEnum.Fechado)
+                 throw new DomainException("Orçamento não pode ser cancelado pois não está fechado!");
 
-
+            Situacao = OrcamentoStatusEnum.Cancelado;
         }
+
+
         public void InsercaoItemOrcamento()
-        {
+        { 
             if (Situacao != OrcamentoStatusEnum.Aberto)
                 throw new DomainException("Orçamento está fechado, reabra para inserir itens!");
 
@@ -87,7 +82,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
             Itens.Add(item);
         }
 
-            public void DefinirValidade(int diasValidade)
+        public void DefinirValidade(int diasValidade)
         {
             this.Validade = new OrcamentoValidade(this, diasValidade);
         }
@@ -111,7 +106,7 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
                 Validations.Add("A quantidade do item é requirida!");
 
 
-            if (string.IsNullOrEmpty(NumOrcamento))
+            if (string.IsNullOrEmpty(numOrcamento))
                 Validations.Add("Número de orçamento é requirido!");
 
             if (string.IsNullOrEmpty(OrcamentoProduto.ProdutoFinal))
@@ -133,15 +128,15 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
         public static class Factory
         {
 
-            public static Orcamento Orcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente , string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+            public static Orcamento Orcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente, OrcamentoUsuario usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
             {
                 return new Orcamento(cdEmpresa, cdFilial, numOrcamento, cliente, usuario, vendedor, tabelaPreco);
             }
-            public static Orcamento OrcamentoRapido(string cdEmpresa, string cdFilial,string numOrcamento, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+            public static Orcamento OrcamentoRapido(string cdEmpresa, string cdFilial,string numOrcamento, OrcamentoUsuario usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
             {
                 return new Orcamento(cdEmpresa, cdFilial, numOrcamento, null, usuario, vendedor, tabelaPreco);
             }
-            public static Orcamento ItemOrcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente, string usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
+            public static Orcamento ItemOrcamento(string cdEmpresa, string cdFilial, string numOrcamento, OrcamentoCliente cliente, OrcamentoUsuario usuario, OrcamentoVendedor vendedor, OrcamentoTabelaPreco tabelaPreco)
             {
                 return new Orcamento(cdEmpresa, cdFilial, numOrcamento, cliente, usuario, vendedor, tabelaPreco);
             }

@@ -21,6 +21,11 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
 
         }
 
+        private void AtrubuirPreco(OrcamentoItemPreco preco)
+        {
+            throw new NotImplementedException();
+        }
+
         public int Seq { get; private set; }
         public string CdEmpresa { get; private set; }
         public string CdFilial { get; private set; }
@@ -35,27 +40,26 @@ namespace Dataplace.Imersao.Core.Domain.Orcamentos
 
 
 
-        #region setters
-        private void AtrubuirPreco(OrcamentoItemPreco preco)
+        #region validations
+
+        public List<string> Validations;
+        public bool IsValid()
         {
-            PrecoTabela = preco.PrecoTabela;
-            PrecoVenda = preco.PrecoVenda;
-            PercAltPreco = preco.PercAltPreco;
-            CalcularTotal();
-        }
+            Validations = new List<string>();
 
-        private void CalcularTotal()
-        {
-            if (Quantidade < 0)
-                throw new ArgumentOutOfRangeException(nameof(Quantidade));
 
-            if (PrecoVenda < 0)
-                new ArgumentOutOfRangeException(nameof(PrecoVenda));
+            if (string.IsNullOrEmpty(CdEmpresa))
+                Validations.Add("Código da empresa é requirido!");
 
-            Total = Quantidade * PrecoVenda;
+            if (string.IsNullOrEmpty(CdFilial))
+                Validations.Add("Código da filial é requirido!");
+
+            string quantidade = null;
+            if (string.IsNullOrEmpty(quantidade))
+                Validations.Add("Código da filial é requirido!");
+
         }
         #endregion
+
     }
-
-
 }
